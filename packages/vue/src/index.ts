@@ -1,3 +1,3 @@
-import { isArray } from '../../shared/src'
+import { isArray } from '@vue/shared'
 
 console.log(isArray([]))
