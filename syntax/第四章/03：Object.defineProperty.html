@@ -14,11 +14,14 @@
     console.log(`总价格：${total}`);
 
     Object.defineProperty(product, 'quantity', {
-        set() {
+        set(newVal) {
             console.log('setter')
+            quantity = newVal
+            effect()
         },
         get() {
             console.log('getter')
+            return quantity
         }
     })
 </script>
