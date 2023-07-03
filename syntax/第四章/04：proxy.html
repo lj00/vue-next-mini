@@ -1,0 +1,29 @@
+<script>
+  let product = {
+    price: 10,
+    quantity: 2
+  }
+
+  const proxyProduct = new Proxy(product, {
+    set(target, key, newVal, receiver) {
+      // console.log(target, key, newVal, receiver)
+      // console.log('setter')
+      target[key] = newVal
+      effect()
+      return true
+    },
+    get(target, key, receiver) {
+      // console.log(target, key, receiver)
+      // console.log('getter')
+      return target[key]
+    }
+  })
+
+  let total = 0
+  let effect = () => {
+    total = proxyProduct.price * productProduct.quantity
+  }
+
+  effect()
+  console.log(`总价格：${total}`)
+</script>
