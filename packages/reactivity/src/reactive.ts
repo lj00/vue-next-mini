@@ -16,7 +16,7 @@ function createReactiveObject(
     return existingProxy
   }
 
-  const proxy = new Proxy(target, mutableHandlers)
+  const proxy = new Proxy(target, baseHandlers)
   proxyMap.set(target, proxy)
   return proxy
 }
