@@ -1,3 +1,17 @@
+
+export function effect<T = any>(fn: () => T) {
+  const _effect = new ReactiveEffect(fn)
+}
+
+export class ReactiveEffect<T = any> {
+  constructor(public fn: () => T) {}
+
+  run() {
+    return this.fn()
+  }
+
+}
+
 /**
  * 收集依赖
  * @param target
