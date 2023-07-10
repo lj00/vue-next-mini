@@ -24,20 +24,28 @@ export class ReactiveEffect<T = any> {
  * @param key
  */
 export function track(target: object, key: unknown) {
-  if (!activeEffect) return 
+  if (!activeEffect) return
   let depsMap = targetMap.get(target)
   if (!depsMap) {
     targetMap.set(target, (depsMap = new Map()))
   }
 
   depsMap.set(key, activeEffect)
-
-  console.log(targetMap)
 }
 
 /**
  * 触发依赖
  */
 export function trigger(target: object, key: unknown, newValue: unknown) {
-  console.log('trigger: 触发依赖')
+  const depsMap = targetMap.get(target)
+  if (!depsMap) {
+    return
+  }
+
+  const effect = depsMap.get(key) as ReactiveEffect
+  if (!effect) {
+    return
+  }
+
+  effect.fn()
 }
