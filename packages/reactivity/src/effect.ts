@@ -1,4 +1,6 @@
-type KeyToDepMap = Map<any, ReactiveEffect>
+import { createDep, Dep } from './dep'
+
+type KeyToDepMap = Map<any, Dep>
 const targetMap = new WeakMap<any, KeyToDepMap>()
 
 export function effect<T = any>(fn: () => T) {
@@ -30,7 +32,19 @@ export function track(target: object, key: unknown) {
     targetMap.set(target, (depsMap = new Map()))
   }
 
-  depsMap.set(key, activeEffect)
+  let dep = depsMap.get(key)
+  if (!dep) {
+    depsMap.set(key, (dep = createDep()))
+  }
+
+  treackEffects(dep)
+}
+
+/**
+ * 利用dep 依次跟踪指定key的所有effect
+ */
+export function treackEffects(dep: Dep) {
+  dep.add(activeEffect!)
 }
 
 /**

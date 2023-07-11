@@ -1,6 +1,11 @@
 var Vue = (function (exports) {
     'use strict';
 
+    var createDep = function (effects) {
+        var dep = new Set(effects);
+        return dep;
+    };
+
     var targetMap = new WeakMap();
     function effect(fn) {
         var _effect = new ReactiveEffect(fn);
@@ -29,7 +34,17 @@ var Vue = (function (exports) {
         if (!depsMap) {
             targetMap.set(target, (depsMap = new Map()));
         }
-        depsMap.set(key, activeEffect);
+        var dep = depsMap.get(key);
+        if (!dep) {
+            depsMap.set(key, (dep = createDep()));
+        }
+        treackEffects(dep);
+    }
+    /**
+     * 利用dep 依次跟踪指定key的所有effect
+     */
+    function treackEffects(dep) {
+        dep.add(activeEffect);
     }
     /**
      * 触发依赖
