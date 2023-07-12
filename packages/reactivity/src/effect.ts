@@ -1,3 +1,4 @@
+import { isArray } from '@vue/shared'
 import { createDep, Dep } from './dep'
 
 type KeyToDepMap = Map<any, Dep>
@@ -56,10 +57,30 @@ export function trigger(target: object, key: unknown, newValue: unknown) {
     return
   }
 
-  const effect = depsMap.get(key) as ReactiveEffect
-  if (!effect) {
+  const dep: Dep | undefined = depsMap.get(key)
+  if (!dep) {
     return
   }
 
-  effect.fn()
+  triggerEffects(dep)
+  
+}
+
+/**
+ * 依次触发dep中保存的依赖
+ */
+export function triggerEffects(dep: Dep) {
+  const effects =  isArray(dep) ? dep : [...dep]
+
+  // 依次触发依赖
+  for (const effect of effects) {
+    triggerEffect(effect)
+  }
+}
+
+/**
+ * 触发指定依赖
+ */
+export function triggerEffect(effect: ReactiveEffect) {
+  effect.run()
 }
