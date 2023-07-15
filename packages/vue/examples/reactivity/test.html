@@ -1,0 +1,15 @@
+<script>
+    class RefImpl {
+        get value() {
+            console.log('get value');
+            return 'get value'
+        }
+
+        set value(val) {
+            console.log('set value');
+        }
+    }
+
+    const ref = new RefImpl()
+    console.log(ref);
+</script>
