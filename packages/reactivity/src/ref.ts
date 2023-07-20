@@ -1,6 +1,6 @@
 import { Dep, createDep } from './dep'
 import { toReactive } from './reactive'
-import { activeEffect, treackEffects } from './effect'
+import { activeEffect, treackEffects, triggerEffects } from './effect'
 import { hasChanged } from '../../shared/src'
 
 export interface Ref<T = any> {
@@ -40,13 +40,27 @@ class RefImpl<T> {
   set value(newVal) {
     if (hasChanged(newVal, this._rawValue)) {
       this._rawValue = newVal
+      this._value = toReactive(newVal)
+      triggerRefValue(this)
     }
   }
 }
 
+/**
+ * 收集依赖
+ */
 export function trackRefValue(ref) {
   if (activeEffect) {
     treackEffects(ref.dep || (ref.dep = createDep()))
+  }
+}
+
+/**
+ * 触发依赖
+ */
+export function triggerRefValue(ref) {
+  if (ref.dep) {
+    triggerEffects(ref.dep)
   }
 }
 

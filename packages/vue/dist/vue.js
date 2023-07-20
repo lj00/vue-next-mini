@@ -213,6 +213,8 @@ var Vue = (function (exports) {
             set: function (newVal) {
                 if (hasChanged(newVal, this._rawValue)) {
                     this._rawValue = newVal;
+                    this._value = toReactive(newVal);
+                    triggerRefValue(this);
                 }
             },
             enumerable: false,
@@ -220,9 +222,20 @@ var Vue = (function (exports) {
         });
         return RefImpl;
     }());
+    /**
+     * 收集依赖
+     */
     function trackRefValue(ref) {
         if (activeEffect) {
             treackEffects(ref.dep || (ref.dep = createDep()));
+        }
+    }
+    /**
+     * 触发依赖
+     */
+    function triggerRefValue(ref) {
+        if (ref.dep) {
+            triggerEffects(ref.dep);
         }
     }
     /**
