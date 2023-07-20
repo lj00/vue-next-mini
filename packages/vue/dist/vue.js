@@ -59,6 +59,9 @@ var Vue = (function (exports) {
     var isObject = function (val) {
         return val !== null && typeof val === 'object';
     };
+    var hasChanged = function (value, oldValue) {
+        return !Object.is(value, oldValue);
+    };
 
     var createDep = function (effects) {
         var dep = new Set(effects);
@@ -199,6 +202,7 @@ var Vue = (function (exports) {
             this.__v_isShallow = __v_isShallow;
             this.dep = undefined;
             this.__v_isRef = true;
+            this._rawValue = value;
             this._value = __v_isShallow ? value : toReactive(value);
         }
         Object.defineProperty(RefImpl.prototype, "value", {
@@ -206,7 +210,11 @@ var Vue = (function (exports) {
                 trackRefValue(this);
                 return this._value;
             },
-            set: function (newVal) { },
+            set: function (newVal) {
+                if (hasChanged(newVal, this._rawValue)) {
+                    this._rawValue = newVal;
+                }
+            },
             enumerable: false,
             configurable: true
         });
