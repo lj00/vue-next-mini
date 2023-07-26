@@ -1,5 +1,6 @@
 import { isArray } from '@vue/shared'
 import { createDep, Dep } from './dep'
+import { ComputedRefImpl } from './computed'
 
 type KeyToDepMap = Map<any, Dep>
 const targetMap = new WeakMap<any, KeyToDepMap>()
@@ -12,6 +13,8 @@ export function effect<T = any>(fn: () => T) {
 export let activeEffect: ReactiveEffect | undefined
 
 export class ReactiveEffect<T = any> {
+  computed?: ComputedRefImpl<T>
+
   constructor(public fn: () => T) {}
 
   run() {
@@ -63,14 +66,13 @@ export function trigger(target: object, key: unknown, newValue: unknown) {
   }
 
   triggerEffects(dep)
-  
 }
 
 /**
  * 依次触发dep中保存的依赖
  */
 export function triggerEffects(dep: Dep) {
-  const effects =  isArray(dep) ? dep : [...dep]
+  const effects = isArray(dep) ? dep : [...dep]
 
   // 依次触发依赖
   for (const effect of effects) {
