@@ -18,6 +18,8 @@ export class ComputedRefImpl<T> {
 
   get value() {
     trackRefValue(this)
+    this._value = this.effect.run()
+    return this._value
   }
 }
 
