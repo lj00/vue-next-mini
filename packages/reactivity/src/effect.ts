@@ -89,6 +89,8 @@ export function triggerEffects(dep: Dep) {
  * 触发指定依赖
  */
 export function triggerEffect(effect: ReactiveEffect) {
+  console.log(effect)
+
   if (effect.scheduler) {
     effect.scheduler()
   } else {
