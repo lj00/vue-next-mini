@@ -152,7 +152,6 @@ var Vue = (function (exports) {
      * 触发指定依赖
      */
     function triggerEffect(effect) {
-        console.log(effect);
         if (effect.scheduler) {
             effect.scheduler();
         }
