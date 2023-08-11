@@ -65,6 +65,7 @@ var Vue = (function (exports) {
     var isFunction = function (val) {
         return typeof val === 'function';
     };
+    var extend = Object.assign;
 
     var createDep = function (effects) {
         var dep = new Set(effects);
@@ -74,6 +75,9 @@ var Vue = (function (exports) {
     var targetMap = new WeakMap();
     function effect(fn, options) {
         var _effect = new ReactiveEffect(fn);
+        if (options) {
+            extend(_effect, options);
+        }
         if (!options || !options.lazy) {
             _effect.run();
         }
