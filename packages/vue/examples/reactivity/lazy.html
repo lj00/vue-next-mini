@@ -24,7 +24,12 @@
         console.log(obj.count)
       },
       {
-        lazy: true
+        scheduler() {
+          setTimeout(() => {
+            console.log(obj.count)
+            console.log(123)
+          }, 1000)
+        }
       }
     )
     obj.count = 2
