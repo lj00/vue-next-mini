@@ -1,5 +1,7 @@
-import { EMPTY_OBJ } from '@vue/shared'
+import { EMPTY_OBJ, hasChanged } from '@vue/shared'
 import { isReactive } from 'packages/reactivity/src/reactive'
+import { ReactiveEffect } from 'packages/reactivity/src/effect'
+import { queuePreFlushCb } from './scheduler'
 
 export interface WatchOptions<Immediate = boolean> {
   immediate?: Immediate
@@ -25,7 +27,37 @@ function doWatch(
   }
 
   if (cb && deep) {
+    // TODO
     const baseGetter = getter
     getter = () => baseGetter()
+  }
+
+  let oldValue = {}
+
+  const job = () => {
+    if (cb) {
+      const newValue = effect.run()
+      if (deep || hasChanged(newValue, oldValue)) {
+        cb(newValue, oldValue)
+      }
+    }
+  }
+
+  let scheduler = () => queuePreFlushCb(job)
+
+  const effect = new ReactiveEffect(getter, scheduler)
+
+  if (cb) {
+    if (immediate) {
+      job()
+    } else {
+      oldValue = effect.run()
+    }
+  } else {
+    effect.run()
+  }
+
+  return () => {
+    effect.stop()
   }
 }

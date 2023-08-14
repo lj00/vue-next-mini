@@ -2,21 +2,17 @@ import { isArray, extend } from '@vue/shared'
 import { createDep, Dep } from './dep'
 import { ComputedRefImpl } from './computed'
 
-
 type KeyToDepMap = Map<any, Dep>
 const targetMap = new WeakMap<any, KeyToDepMap>()
 
 export type EffectScheduler = (...args: any[]) => any
 
 export interface ReactiveEffectOptions {
-  lazy?: boolean,
+  lazy?: boolean
   scheduler?: EffectScheduler
 }
 
-export function effect<T = any>(
-  fn: () => T,
-  options?: ReactiveEffectOptions
-) {
+export function effect<T = any>(fn: () => T, options?: ReactiveEffectOptions) {
   const _effect = new ReactiveEffect(fn)
 
   if (options) {
@@ -43,6 +39,8 @@ export class ReactiveEffect<T = any> {
 
     return this.fn()
   }
+
+  stop() {}
 }
 
 /**
