@@ -39,6 +39,7 @@ function doWatch(
       const newValue = effect.run()
       if (deep || hasChanged(newValue, oldValue)) {
         cb(newValue, oldValue)
+        oldValue = newValue
       }
     }
   }
