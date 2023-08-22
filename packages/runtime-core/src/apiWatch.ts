@@ -1,4 +1,4 @@
-import { EMPTY_OBJ, hasChanged } from '@vue/shared'
+import { EMPTY_OBJ, hasChanged, isObject } from '@vue/shared'
 import { isReactive } from 'packages/reactivity/src/reactive'
 import { ReactiveEffect } from 'packages/reactivity/src/effect'
 import { queuePreFlushCb } from './scheduler'
@@ -60,5 +60,15 @@ function doWatch(
 
   return () => {
     effect.stop()
+  }
+}
+
+export function traverse(value: unknown) {
+  if (!isObject(value)) {
+    return value
+  }
+
+  for (const key in value as object) {
+    traverse()
   }
 }
