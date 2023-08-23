@@ -27,9 +27,8 @@ function doWatch(
   }
 
   if (cb && deep) {
-    // TODO
     const baseGetter = getter
-    getter = () => baseGetter()
+    getter = () => traverse(baseGetter())
   }
 
   let oldValue = {}
@@ -69,6 +68,8 @@ export function traverse(value: unknown) {
   }
 
   for (const key in value as object) {
-    traverse()
+    traverse((value as object)[key])
   }
+
+  return value
 }

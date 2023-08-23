@@ -366,9 +366,8 @@ var Vue = (function (exports) {
             getter = function () { };
         }
         if (cb && deep) {
-            // TODO
             var baseGetter_1 = getter;
-            getter = function () { return baseGetter_1(); };
+            getter = function () { return traverse(baseGetter_1()); };
         }
         var oldValue = {};
         var job = function () {
@@ -396,6 +395,15 @@ var Vue = (function (exports) {
         return function () {
             effect.stop();
         };
+    }
+    function traverse(value) {
+        if (!isObject(value)) {
+            return value;
+        }
+        for (var key in value) {
+            traverse(value[key]);
+        }
+        return value;
     }
 
     exports.computed = computed;
