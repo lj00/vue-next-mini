@@ -44,8 +44,8 @@
     function patch(oldVNode, newVNode, container) {
       unmount(container)
 
-      const ele = document.createElement(vnode.type)
-      ele.innerText = vnode.children
+      const ele = document.createElement(newVNode.type)
+      ele.innerText = newVNode.children
       container.appendChild(ele)
     }
 
