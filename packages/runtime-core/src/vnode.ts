@@ -6,4 +6,8 @@ export interface VNode {
   shapeFlag: number
 }
 
+export function isVNode(value: any): value is VNode {
+  return value ? value.__v_isVNode === true : false
+}
+
 export function createVNode(type, props, children) {}
