@@ -1,4 +1,4 @@
-import { isString } from '@vue/shared'
+import { isString, isArray, isFunction } from '@vue/shared'
 import { ShapeFlags } from 'packages/shared/src/shapeFlags'
 
 export interface VNode {
@@ -20,5 +20,31 @@ export function createVNode(type, props, children): VNode {
 }
 
 function createBaseVNode(type, props, children, shapeFlag) {
-  
+  const vnode = {
+    __v_isVNode: true,
+    type,
+    props,
+    children,
+    shapeFlag
+  } as VNode 
+
+  normalizeChildren(vnode, children)
+
+  return vnode
+}
+
+export function normalizeChildren(vnode: VNode, children: unknown) {
+  let type = 0
+
+  const { shapeFlag } = vnode
+  if (children == null) {
+    children = null
+  } else if (isArray(children)) {
+
+  } else if (typeof children === 'object') {
+
+  } else if (isFunction(children)) {
+    
+  }
+
 }
