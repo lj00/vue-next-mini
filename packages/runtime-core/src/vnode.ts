@@ -16,7 +16,7 @@ export function isVNode(value: any): value is VNode {
 export function createVNode(type, props, children): VNode {
   const shapeFlag = isString(type) ? ShapeFlags.ELEMENT : 0
 
-  return createBaseVNode(type, props, children, shapeFlag) {}
+  return createBaseVNode(type, props, children, shapeFlag)
 }
 
 function createBaseVNode(type, props, children, shapeFlag) {
@@ -26,7 +26,7 @@ function createBaseVNode(type, props, children, shapeFlag) {
     props,
     children,
     shapeFlag
-  } as VNode 
+  } as VNode
 
   normalizeChildren(vnode, children)
 
@@ -36,15 +36,16 @@ function createBaseVNode(type, props, children, shapeFlag) {
 export function normalizeChildren(vnode: VNode, children: unknown) {
   let type = 0
 
-  const { shapeFlag } = vnode
   if (children == null) {
     children = null
   } else if (isArray(children)) {
-
   } else if (typeof children === 'object') {
-
   } else if (isFunction(children)) {
-    
+  } else {
+    children = String(children)
+    type = ShapeFlags.TEXT_CHILDREN
   }
 
+  vnode.children = children
+  vnode.shapeFlag |= type
 }
