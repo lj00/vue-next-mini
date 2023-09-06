@@ -411,7 +411,11 @@ var Vue = (function (exports) {
         return value ? value.__v_isVNode === true : false;
     }
     function createVNode(type, props, children) {
-        var shapeFlag = isString(type) ? 1 /* ShapeFlags.ELEMENT */ : 0;
+        var shapeFlag = isString(type)
+            ? 1 /* ShapeFlags.ELEMENT */
+            : isObject(type)
+                ? 4 /* ShapeFlags.STATEFUL_COMPONENT */
+                : 0;
         return createBaseVNode(type, props, children, shapeFlag);
     }
     function createBaseVNode(type, props, children, shapeFlag) {
