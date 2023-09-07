@@ -1,6 +1,10 @@
 import { isString, isArray, isFunction, isObject } from '@vue/shared'
 import { ShapeFlags } from 'packages/shared/src/shapeFlags'
 
+export const Fragment = Symbol('Framgment')
+export const Text = Symbol('Text')
+export const Comment = Symbol('Comment')
+
 export interface VNode {
   __v_isVNode: true
   type: any
