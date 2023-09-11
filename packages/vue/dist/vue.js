@@ -407,10 +407,42 @@ var Vue = (function (exports) {
         return value;
     }
 
+    function normalizeClass(value) {
+        var res = '';
+        if (isString(value)) {
+            res = value;
+        }
+        else if (isArray(value)) {
+            for (var i = 0; i < value.length; i++) {
+                var normalized = normalizeClass(value[i]);
+                if (normalized) {
+                    res += normalized + ' ';
+                }
+            }
+        }
+        else if (isObject(value)) {
+            for (var name_1 in value) {
+                if (value[name_1]) {
+                    res += name_1 + ' ';
+                }
+            }
+        }
+        return res.trim();
+    }
+
+    var Fragment = Symbol('Framgment');
+    var Text = Symbol('Text');
+    var Comment = Symbol('Comment');
     function isVNode(value) {
         return value ? value.__v_isVNode === true : false;
     }
     function createVNode(type, props, children) {
+        if (props) {
+            var klass = props.class; props.style;
+            if (klass && !isString(klass)) {
+                props.class = normalizeClass(klass);
+            }
+        }
         var shapeFlag = isString(type)
             ? 1 /* ShapeFlags.ELEMENT */
             : isObject(type)
@@ -471,6 +503,9 @@ var Vue = (function (exports) {
         }
     }
 
+    exports.Comment = Comment;
+    exports.Fragment = Fragment;
+    exports.Text = Text;
     exports.computed = computed;
     exports.effect = effect;
     exports.h = h;
