@@ -15,4 +15,5 @@ export const extend = Object.assign
 
 export const EMPTY_OBJ: { readonly [key: string]: any } = {}
 
-export const
+const onRE = /^on[^a-z]/
+export const isOn = (key: string) => onRE.test(key)
