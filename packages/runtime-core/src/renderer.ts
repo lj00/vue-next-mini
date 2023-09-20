@@ -25,7 +25,22 @@ export function createRenderer(options: RendererOptions) {
 }
 
 function baseCreateRenderer(options: RendererOptions): any {
-  const processElement = () => {}
+  const processElement = (oldVnode, newVnode, container, anchor) => {
+    if (oldVnode == null) {
+      mountElement(newVnode, container, anchor)
+    } else {
+      // TODO: 更新操作
+    }
+  }
+
+  const mountElement = (vnode, container, anchor) => {
+    const { type, props, shapeFlag } = vnode
+    // 1. 创建element
+
+    // 2. 设置文本
+    // 3. 设置props
+    // 4. 插入
+  }
 
   const patch = (oldVnode, newVnode, container, anchor = null) => {
     if (oldVnode === newVnode) {
