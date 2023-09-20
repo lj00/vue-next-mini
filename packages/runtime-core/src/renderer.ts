@@ -25,6 +25,8 @@ export function createRenderer(options: RendererOptions) {
 }
 
 function baseCreateRenderer(options: RendererOptions): any {
+  const processElement = () => {}
+
   const patch = (oldVnode, newVnode, container, anchor = null) => {
     if (oldVnode === newVnode) {
       return
@@ -40,6 +42,7 @@ function baseCreateRenderer(options: RendererOptions): any {
         break
       default:
         if (shapeFlag & ShapeFlags.ELEMENT) {
+          processElement(oldVnode, newVnode, container, anchor)
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
         }
     }
