@@ -25,6 +25,13 @@ export function createRenderer(options: RendererOptions) {
 }
 
 function baseCreateRenderer(options: RendererOptions): any {
+  const {
+    insert: hostInsert,
+    patchProp: hostPatchProp,
+    createElement: hostCreateElement,
+    setElementText: hostSetElementText
+  } = options
+
   const processElement = (oldVnode, newVnode, container, anchor) => {
     if (oldVnode == null) {
       mountElement(newVnode, container, anchor)
@@ -36,9 +43,18 @@ function baseCreateRenderer(options: RendererOptions): any {
   const mountElement = (vnode, container, anchor) => {
     const { type, props, shapeFlag } = vnode
     // 1. 创建element
-
-    // 2. 设置文本
+    const el = (vnode.el = hostCreateElement(type))
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      // 2. 设置文本
+      hostSetElementText(el, vnode.children)
+    } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+    }
     // 3. 设置props
+    if (props) {
+      for (const key in props) {
+        hostPatchProp(el, key, null, props[key])
+      }
+    }
     // 4. 插入
   }
 
