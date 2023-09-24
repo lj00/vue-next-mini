@@ -56,6 +56,7 @@ function baseCreateRenderer(options: RendererOptions): any {
       }
     }
     // 4. 插入
+    hostInsert(el, container, anchor)
   }
 
   const patch = (oldVnode, newVnode, container, anchor = null) => {
