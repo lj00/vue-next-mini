@@ -1,6 +1,6 @@
 const doc = document
 
-export const nodeoOps = {
+export const nodeOps = {
   insert: (child, parent, anchor) => {
     parent.insertBefore(child, anchor || null)
   },
