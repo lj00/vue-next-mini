@@ -13,16 +13,15 @@
   </body>
 
   <script>
-    const { h } = Vue
-
-    const component = {
-      render() {
-        const vnode1 = h('div', '这是一个 component')
-        return vnode1
-      }
-    }
-
-    const vnode2 = h(component)
-    console.log(vnode2)
+    const { h, render } = Vue
+    console.log(render)
+    const vnode = h(
+      'div',
+      {
+        class: 'test'
+      },
+      'hello render'
+    )
+    console.log(vnode)
   </script>
 </html>
