@@ -11,6 +11,6 @@ function ensureRenderer() {
   return renderer || (renderer = createRenderer(rendererOptions))
 }
 
-export const redner = (...args) => {
-  ensureRenderer().render
+export const render = (...args) => {
+  ensureRenderer().render(...args)
 }
