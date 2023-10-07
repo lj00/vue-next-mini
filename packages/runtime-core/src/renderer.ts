@@ -32,11 +32,13 @@ function baseCreateRenderer(options: RendererOptions): any {
     setElementText: hostSetElementText
   } = options
 
-  const processElement = (oldVnode, newVnode, container, anchor) => {
-    if (oldVnode == null) {
-      mountElement(newVnode, container, anchor)
+  const processElement = (oldVNode, newVNode, container, anchor) => {
+    if (oldVNode == null) {
+      // 挂载操作
+      mountElement(newVNode, container, anchor)
     } else {
-      // TODO: 更新操作
+      // 更新操作
+      patchElement(oldVNode, newVnode)
     }
   }
 
@@ -57,6 +59,10 @@ function baseCreateRenderer(options: RendererOptions): any {
     }
     // 4. 插入
     hostInsert(el, container, anchor)
+  }
+
+  const patchElement = (oldVNode, newVNode) => {
+    const
   }
 
   const patch = (oldVnode, newVnode, container, anchor = null) => {
