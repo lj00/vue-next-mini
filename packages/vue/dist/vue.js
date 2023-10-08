@@ -510,9 +510,14 @@ var Vue = (function (exports) {
     }
     function baseCreateRenderer(options) {
         var hostInsert = options.insert, hostPatchProp = options.patchProp, hostCreateElement = options.createElement, hostSetElementText = options.setElementText;
-        var processElement = function (oldVnode, newVnode, container, anchor) {
-            if (oldVnode == null) {
-                mountElement(newVnode, container, anchor);
+        var processElement = function (oldVNode, newVNode, container, anchor) {
+            if (oldVNode == null) {
+                // 挂载操作
+                mountElement(newVNode, container, anchor);
+            }
+            else {
+                // 更新操作
+                patchElement(oldVNode, newVNode);
             }
         };
         var mountElement = function (vnode, container, anchor) {
@@ -531,6 +536,18 @@ var Vue = (function (exports) {
             }
             // 4. 插入
             hostInsert(el, container, anchor);
+        };
+        var patchElement = function (oldVNode, newVNode) {
+            (newVNode.el = oldVNode.el);
+            oldVNode.props || EMPTY_OBJ;
+            newVNode.props || EMPTY_OBJ;
+            patchChildren(oldVNode, newVNode);
+        };
+        var patchChildren = function (oldVNode, newVNode, container, anchor) {
+            oldVNode && oldVNode.children;
+            oldVNode ? oldVNode.shapeFlag : 0;
+            newVNode && newVNode.children;
+            newVNode.shapeFlag;
         };
         var patch = function (oldVnode, newVnode, container, anchor) {
             if (anchor === void 0) { anchor = null; }

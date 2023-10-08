@@ -1,3 +1,4 @@
+import { EMPTY_OBJ } from '@vue/shared'
 import { ShapeFlags } from 'packages/shared/src/shapeFlags'
 import { Comment, Fragment, Text } from './vnode'
 
@@ -38,7 +39,7 @@ function baseCreateRenderer(options: RendererOptions): any {
       mountElement(newVNode, container, anchor)
     } else {
       // 更新操作
-      patchElement(oldVNode, newVnode)
+      patchElement(oldVNode, newVNode)
     }
   }
 
@@ -62,7 +63,19 @@ function baseCreateRenderer(options: RendererOptions): any {
   }
 
   const patchElement = (oldVNode, newVNode) => {
-    const
+    const el = (newVNode.el = oldVNode.el)
+
+    const oldProps = oldVNode.props || EMPTY_OBJ
+    const newProps = newVNode.props || EMPTY_OBJ
+
+    patchChildren(oldVNode, newVNode, el, null)
+  }
+
+  const patchChildren = (oldVNode, newVNode, container, anchor) => {
+    const c1 = oldVNode && oldVNode.children
+    const prevShapeFlag = oldVNode ? oldVNode.shapeFlag : 0
+    const c2 = newVNode && newVNode.children
+    const { shapeFlag } = newVNode
   }
 
   const patch = (oldVnode, newVnode, container, anchor = null) => {
