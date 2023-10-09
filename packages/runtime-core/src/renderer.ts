@@ -69,6 +69,8 @@ function baseCreateRenderer(options: RendererOptions): any {
     const newProps = newVNode.props || EMPTY_OBJ
 
     patchChildren(oldVNode, newVNode, el, null)
+
+    patchProps(el, newVNode, oldProps, newProps)
   }
 
   const patchChildren = (oldVNode, newVNode, container, anchor) => {
@@ -84,7 +86,31 @@ function baseCreateRenderer(options: RendererOptions): any {
 
       if (c2 !== c1) {
         // 挂载新子节点的文本
-        hostSetElementText()
+        hostSetElementText(container, c2)
+      }
+    } else {
+      if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+          // TODO: diff
+        } else {
+          // TODO: 卸载
+        }
+      } else {
+        if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+          // 删除旧节点的text
+          hostSetElementText(container, '')
+        }
+
+        if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+          // TODO: 单独新节点的挂载
+        }
+      }
+    }
+  }
+
+  const patchProps = (el: Element, vnode, oldProps, newProps) => {
+    if (oldProps !== newProps) {
+      for (const key in newProps) {
       }
     }
   }
