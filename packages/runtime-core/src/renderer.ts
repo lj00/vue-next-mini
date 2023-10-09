@@ -76,6 +76,17 @@ function baseCreateRenderer(options: RendererOptions): any {
     const prevShapeFlag = oldVNode ? oldVNode.shapeFlag : 0
     const c2 = newVNode && newVNode.children
     const { shapeFlag } = newVNode
+
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        // TODO:卸载旧子节点
+      }
+
+      if (c2 !== c1) {
+        // 挂载新子节点的文本
+        hostSetElementText()
+      }
+    }
   }
 
   const patch = (oldVnode, newVnode, container, anchor = null) => {

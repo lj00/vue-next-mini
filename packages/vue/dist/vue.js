@@ -544,10 +544,16 @@ var Vue = (function (exports) {
             patchChildren(oldVNode, newVNode);
         };
         var patchChildren = function (oldVNode, newVNode, container, anchor) {
-            oldVNode && oldVNode.children;
+            var c1 = oldVNode && oldVNode.children;
             oldVNode ? oldVNode.shapeFlag : 0;
-            newVNode && newVNode.children;
-            newVNode.shapeFlag;
+            var c2 = newVNode && newVNode.children;
+            var shapeFlag = newVNode.shapeFlag;
+            if (shapeFlag & 8 /* ShapeFlags.TEXT_CHILDREN */) {
+                if (c2 !== c1) {
+                    // 挂载新子节点的文本
+                    hostSetElementText();
+                }
+            }
         };
         var patch = function (oldVnode, newVnode, container, anchor) {
             if (anchor === void 0) { anchor = null; }
