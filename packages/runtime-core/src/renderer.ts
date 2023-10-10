@@ -111,6 +111,19 @@ function baseCreateRenderer(options: RendererOptions): any {
   const patchProps = (el: Element, vnode, oldProps, newProps) => {
     if (oldProps !== newProps) {
       for (const key in newProps) {
+        const next = newProps[key]
+        const prev = oldProps[key]
+        if (next !== prev) {
+          hostPatchProp(el, key, prev, next)
+        }
+      }
+    }
+
+    if (oldProps !== EMPTY_OBJ) {
+      for (const key in oldProps) {
+        if (!(key in newProps)) {
+          hostPatchProp(el, key, oldProps[key], null)
+        }
       }
     }
   }

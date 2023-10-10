@@ -539,9 +539,10 @@ var Vue = (function (exports) {
         };
         var patchElement = function (oldVNode, newVNode) {
             var el = (newVNode.el = oldVNode.el);
-            oldVNode.props || EMPTY_OBJ;
-            newVNode.props || EMPTY_OBJ;
+            var oldProps = oldVNode.props || EMPTY_OBJ;
+            var newProps = newVNode.props || EMPTY_OBJ;
             patchChildren(oldVNode, newVNode, el);
+            patchProps(el, newVNode, oldProps, newProps);
         };
         var patchChildren = function (oldVNode, newVNode, container, anchor) {
             var c1 = oldVNode && oldVNode.children;
@@ -560,6 +561,24 @@ var Vue = (function (exports) {
                     if (prevShapeFlag & 8 /* ShapeFlags.TEXT_CHILDREN */) {
                         // 删除旧节点的text
                         hostSetElementText(container, '');
+                    }
+                }
+            }
+        };
+        var patchProps = function (el, vnode, oldProps, newProps) {
+            if (oldProps !== newProps) {
+                for (var key in newProps) {
+                    var next = newProps[key];
+                    var prev = oldProps[key];
+                    if (next !== prev) {
+                        hostPatchProp(el, key, prev, next);
+                    }
+                }
+            }
+            if (oldProps !== EMPTY_OBJ) {
+                for (var key in oldProps) {
+                    if (!(key in newProps)) {
+                        hostPatchProp(el, key, oldProps[key], null);
                     }
                 }
             }
