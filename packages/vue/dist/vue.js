@@ -511,6 +511,7 @@ var Vue = (function (exports) {
     function baseCreateRenderer(options) {
         var hostInsert = options.insert, hostPatchProp = options.patchProp, hostCreateElement = options.createElement, hostSetElementText = options.setElementText;
         var processElement = function (oldVNode, newVNode, container, anchor) {
+            debugger;
             if (oldVNode == null) {
                 // 挂载操作
                 mountElement(newVNode, container, anchor);
@@ -545,6 +546,7 @@ var Vue = (function (exports) {
             patchProps(el, newVNode, oldProps, newProps);
         };
         var patchChildren = function (oldVNode, newVNode, container, anchor) {
+            debugger;
             var c1 = oldVNode && oldVNode.children;
             var prevShapeFlag = oldVNode ? oldVNode.shapeFlag : 0;
             var c2 = newVNode && newVNode.children;
@@ -583,12 +585,12 @@ var Vue = (function (exports) {
                 }
             }
         };
-        var patch = function (oldVnode, newVnode, container, anchor) {
+        var patch = function (oldVNode, newVNode, container, anchor) {
             if (anchor === void 0) { anchor = null; }
-            if (oldVnode === newVnode) {
+            if (oldVNode === newVNode) {
                 return;
             }
-            var type = newVnode.type, shapeFlag = newVnode.shapeFlag;
+            var type = newVNode.type, shapeFlag = newVNode.shapeFlag;
             switch (type) {
                 case Text:
                     break;
@@ -598,7 +600,8 @@ var Vue = (function (exports) {
                     break;
                 default:
                     if (shapeFlag & 1 /* ShapeFlags.ELEMENT */) {
-                        processElement(oldVnode, newVnode, container, anchor);
+                        debugger;
+                        processElement(oldVNode, newVNode, container, anchor);
                     }
             }
         };

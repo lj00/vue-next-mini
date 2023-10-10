@@ -34,6 +34,7 @@ function baseCreateRenderer(options: RendererOptions): any {
   } = options
 
   const processElement = (oldVNode, newVNode, container, anchor) => {
+    debugger
     if (oldVNode == null) {
       // 挂载操作
       mountElement(newVNode, container, anchor)
@@ -74,6 +75,7 @@ function baseCreateRenderer(options: RendererOptions): any {
   }
 
   const patchChildren = (oldVNode, newVNode, container, anchor) => {
+    debugger
     const c1 = oldVNode && oldVNode.children
     const prevShapeFlag = oldVNode ? oldVNode.shapeFlag : 0
     const c2 = newVNode && newVNode.children
@@ -128,12 +130,12 @@ function baseCreateRenderer(options: RendererOptions): any {
     }
   }
 
-  const patch = (oldVnode, newVnode, container, anchor = null) => {
-    if (oldVnode === newVnode) {
+  const patch = (oldVNode, newVNode, container, anchor = null) => {
+    if (oldVNode === newVNode) {
       return
     }
 
-    const { type, shapeFlag } = newVnode
+    const { type, shapeFlag } = newVNode
     switch (type) {
       case Text:
         break
@@ -143,7 +145,8 @@ function baseCreateRenderer(options: RendererOptions): any {
         break
       default:
         if (shapeFlag & ShapeFlags.ELEMENT) {
-          processElement(oldVnode, newVnode, container, anchor)
+          debugger
+          processElement(oldVNode, newVNode, container, anchor)
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
         }
     }
