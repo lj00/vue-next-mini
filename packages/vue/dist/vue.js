@@ -511,7 +511,6 @@ var Vue = (function (exports) {
     function baseCreateRenderer(options) {
         var hostInsert = options.insert, hostPatchProp = options.patchProp, hostCreateElement = options.createElement, hostSetElementText = options.setElementText;
         var processElement = function (oldVNode, newVNode, container, anchor) {
-            debugger;
             if (oldVNode == null) {
                 // 挂载操作
                 mountElement(newVNode, container, anchor);
@@ -546,7 +545,6 @@ var Vue = (function (exports) {
             patchProps(el, newVNode, oldProps, newProps);
         };
         var patchChildren = function (oldVNode, newVNode, container, anchor) {
-            debugger;
             var c1 = oldVNode && oldVNode.children;
             var prevShapeFlag = oldVNode ? oldVNode.shapeFlag : 0;
             var c2 = newVNode && newVNode.children;
@@ -600,7 +598,6 @@ var Vue = (function (exports) {
                     break;
                 default:
                     if (shapeFlag & 1 /* ShapeFlags.ELEMENT */) {
-                        debugger;
                         processElement(oldVNode, newVNode, container, anchor);
                     }
             }
@@ -610,6 +607,7 @@ var Vue = (function (exports) {
             else {
                 patch(container._vnode || null, vnode, container);
             }
+            container._vnode = vnode;
         };
         return {
             render: render

@@ -34,7 +34,6 @@ function baseCreateRenderer(options: RendererOptions): any {
   } = options
 
   const processElement = (oldVNode, newVNode, container, anchor) => {
-    debugger
     if (oldVNode == null) {
       // 挂载操作
       mountElement(newVNode, container, anchor)
@@ -75,7 +74,6 @@ function baseCreateRenderer(options: RendererOptions): any {
   }
 
   const patchChildren = (oldVNode, newVNode, container, anchor) => {
-    debugger
     const c1 = oldVNode && oldVNode.children
     const prevShapeFlag = oldVNode ? oldVNode.shapeFlag : 0
     const c2 = newVNode && newVNode.children
@@ -145,7 +143,6 @@ function baseCreateRenderer(options: RendererOptions): any {
         break
       default:
         if (shapeFlag & ShapeFlags.ELEMENT) {
-          debugger
           processElement(oldVNode, newVNode, container, anchor)
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
         }
@@ -158,6 +155,7 @@ function baseCreateRenderer(options: RendererOptions): any {
     } else {
       patch(container._vnode || null, vnode, container)
     }
+    container._vnode = vnode
   }
 
   return {
