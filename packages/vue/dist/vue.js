@@ -649,6 +649,15 @@ var Vue = (function (exports) {
         }
     };
 
+    function patchAttr(el, key, value) {
+        if (value === null) {
+            el.removeAttribute(key);
+        }
+        else {
+            el.setAttribute(key, value);
+        }
+    }
+
     function patchClass(el, value) {
         if (value == null) {
             el.removeAttribute('class');
@@ -688,7 +697,9 @@ var Vue = (function (exports) {
         else if (isOn(key)) {
             patchEvent();
         }
-        else ;
+        else {
+            patchAttr(el, key, nextValue);
+        }
     };
 
     var rendererOptions = extend({ patchProp: patchProp }, nodeOps);
