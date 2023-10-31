@@ -687,20 +687,56 @@ var Vue = (function (exports) {
         style[name] = val;
     }
 
-    var patchProp = function (el, key, preValue, nextValue) {
+    function patchDOMProp(el, key, value) {
+        try {
+            el[key] = value;
+        }
+        catch (e) { }
+    }
+
+    function patchEvent(el, rawName, prevValue, nextValue) {
+        var invokers = el._vei || (el._vei = {});
+        var existingInvoker = invokers[rawName];
+        if (nextValue && existingInvoker) {
+            existingInvoker.value = nextValue;
+        }
+        else {
+            parseName(rawName);
+        }
+    }
+    function parseName(name) {
+        return name.slice(2).toLowerCase();
+    }
+
+    var patchProp = function (el, key, prevValue, nextValue) {
         if (key === 'class') {
             patchClass(el, nextValue);
         }
         else if (key === 'style') {
-            patchStyle(el, preValue, nextValue);
+            patchStyle(el, prevValue, nextValue);
         }
         else if (isOn(key)) {
-            patchEvent();
+            patchEvent(el, key, prevValue, nextValue);
+        }
+        else if (shouldSetAsProp(el, key)) {
+            patchDOMProp(el, key, nextValue);
         }
         else {
             patchAttr(el, key, nextValue);
         }
     };
+    function shouldSetAsProp(el, key) {
+        if (key === 'form') {
+            return false;
+        }
+        if (key === 'list' && el.tagName === 'INPUT') {
+            return false;
+        }
+        if (key === 'type' && el.tagName === 'TEXTAREA') {
+            return false;
+        }
+        return key in el;
+    }
 
     var rendererOptions = extend({ patchProp: patchProp }, nodeOps);
     var renderer;
