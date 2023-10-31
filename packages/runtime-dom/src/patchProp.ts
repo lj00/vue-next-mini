@@ -3,14 +3,15 @@ import { patchAttr } from './modules/attrs'
 import { patchClass } from './modules/class'
 import { patchStyle } from './modules/style'
 import { patchDOMProp } from './modules/props'
+import { patchEvent } from './modules/events'
 
-export const patchProp = (el: Element, key, preValue, nextValue) => {
+export const patchProp = (el: Element, key, prevValue, nextValue) => {
   if (key === 'class') {
     patchClass(el, nextValue)
   } else if (key === 'style') {
-    patchStyle(el, preValue, nextValue)
+    patchStyle(el, prevValue, nextValue)
   } else if (isOn(key)) {
-    patchEvent()
+    patchEvent(el, key, prevValue, nextValue)
   } else if (shouldSetAsProp(el, key)) {
     patchDOMProp(el, key, nextValue)
   } else {
