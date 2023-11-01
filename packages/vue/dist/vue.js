@@ -702,10 +702,15 @@ var Vue = (function (exports) {
             existingInvoker.value = nextValue;
         }
         else {
-            parseName(rawName);
+            var name_1 = parseName(rawName);
             if (nextValue) {
                 // add
-                (invokers[rawName] = createInvoker());
+                var invoker = (invokers[rawName] = createInvoker(nextValue));
+                el.addEventListener(name_1, invoker);
+            }
+            else if (existingInvoker) {
+                el.removeEventListener(name_1, existingInvoker);
+                invokers[rawName] = undefined;
             }
         }
     }

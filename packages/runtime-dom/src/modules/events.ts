@@ -13,8 +13,11 @@ export function patchEvent(
     const name = parseName(rawName)
     if (nextValue) {
       // add
-      const invoker = (invokers[rawName] = createInvoker())
+      const invoker = (invokers[rawName] = createInvoker(nextValue))
+      el.addEventListener(name, invoker)
     } else if (existingInvoker) {
+      el.removeEventListener(name, existingInvoker)
+      invokers[rawName] = undefined
     }
   }
 }
