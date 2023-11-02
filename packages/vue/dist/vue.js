@@ -598,6 +598,7 @@ var Vue = (function (exports) {
             var type = newVNode.type, shapeFlag = newVNode.shapeFlag;
             switch (type) {
                 case Text:
+                    processText(oldVNode, newVNode, container, anchor);
                     break;
                 case Comment:
                     break;

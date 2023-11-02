@@ -146,6 +146,7 @@ function baseCreateRenderer(options: RendererOptions): any {
     const { type, shapeFlag } = newVNode
     switch (type) {
       case Text:
+        processText(oldVNode, newVNode, container, anchor)
         break
       case Comment:
         break
