@@ -512,7 +512,12 @@ var Vue = (function (exports) {
         return baseCreateRenderer(options);
     }
     function baseCreateRenderer(options) {
-        var hostInsert = options.insert, hostPatchProp = options.patchProp, hostCreateElement = options.createElement, hostSetElementText = options.setElementText, hostRemove = options.remove;
+        var hostInsert = options.insert, hostPatchProp = options.patchProp, hostCreateElement = options.createElement, hostSetElementText = options.setElementText, hostRemove = options.remove, hostCreateText = options.createText;
+        var processText = function (oldVNode, newVNode, container, anchor) {
+            if (oldVNode == null) {
+                newVNode.el = hostCreateText();
+            }
+        };
         var processElement = function (oldVNode, newVNode, container, anchor) {
             if (oldVNode == null) {
                 // 挂载操作
@@ -598,7 +603,7 @@ var Vue = (function (exports) {
             var type = newVNode.type, shapeFlag = newVNode.shapeFlag;
             switch (type) {
                 case Text:
-                    processText(oldVNode, newVNode, container, anchor);
+                    processText(oldVNode, newVNode);
                     break;
                 case Comment:
                     break;

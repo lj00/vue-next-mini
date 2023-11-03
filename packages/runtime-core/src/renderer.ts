@@ -23,6 +23,10 @@ export interface RendererOptions {
    * 删除element
    */
   remove(el: Element)
+  /**
+   * 创建文本节点
+   */
+  createText(text: String)
 }
 
 export function createRenderer(options: RendererOptions) {
@@ -35,8 +39,16 @@ function baseCreateRenderer(options: RendererOptions): any {
     patchProp: hostPatchProp,
     createElement: hostCreateElement,
     setElementText: hostSetElementText,
-    remove: hostRemove
+    remove: hostRemove,
+    createText: hostCreateText
   } = options
+
+  const processText = (oldVNode, newVNode, container, anchor) => {
+    if (oldVNode == null) {
+      newVNode.el = hostCreateText()
+    } else {
+    }
+  }
 
   const processElement = (oldVNode, newVNode, container, anchor) => {
     if (oldVNode == null) {
