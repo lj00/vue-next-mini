@@ -512,10 +512,17 @@ var Vue = (function (exports) {
         return baseCreateRenderer(options);
     }
     function baseCreateRenderer(options) {
-        var hostInsert = options.insert, hostPatchProp = options.patchProp, hostCreateElement = options.createElement, hostSetElementText = options.setElementText, hostRemove = options.remove, hostCreateText = options.createText;
+        var hostInsert = options.insert, hostPatchProp = options.patchProp, hostCreateElement = options.createElement, hostSetElementText = options.setElementText, hostRemove = options.remove, hostCreateText = options.createText, hostSetText = options.setText, hostCreateComment = options.createComment;
         var processText = function (oldVNode, newVNode, container, anchor) {
             if (oldVNode == null) {
-                newVNode.el = hostCreateText();
+                newVNode.el = hostCreateText(newVNode.children);
+                hostInsert(newVNode.el, container, anchor);
+            }
+            else {
+                var el = (newVNode.el = oldVNode.el);
+                if (newVNode.children !== oldVNode.children) {
+                    hostSetText(el, newVNode.children);
+                }
             }
         };
         var processElement = function (oldVNode, newVNode, container, anchor) {
@@ -526,6 +533,15 @@ var Vue = (function (exports) {
             else {
                 // 更新操作
                 patchElement(oldVNode, newVNode);
+            }
+        };
+        var processCommentNode = function (oldVNode, newVNode, container, anchor) {
+            if (oldVNode == null) {
+                newVNode.el = hostCreateComment(newVNode.children);
+                hostInsert(newVNode.el, container, anchor);
+            }
+            else {
+                newVNode.el = oldVNode.el;
             }
         };
         var mountElement = function (vnode, container, anchor) {
@@ -603,9 +619,10 @@ var Vue = (function (exports) {
             var type = newVNode.type, shapeFlag = newVNode.shapeFlag;
             switch (type) {
                 case Text:
-                    processText(oldVNode, newVNode);
+                    processText(oldVNode, newVNode, container, anchor);
                     break;
                 case Comment:
+                    processCommentNode(oldVNode, newVNode, container, anchor);
                     break;
                 case Fragment:
                     break;
@@ -652,7 +669,12 @@ var Vue = (function (exports) {
             if (parent) {
                 parent.removeChild(child);
             }
-        }
+        },
+        createText: function (text) { return doc.createTextNode(text); },
+        setText: function (node, text) {
+            node.nodeValue = text;
+        },
+        createComment: function (text) { return doc.createComment(text); }
     };
 
     function patchAttr(el, key, value) {

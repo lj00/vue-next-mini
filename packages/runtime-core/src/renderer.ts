@@ -27,6 +27,8 @@ export interface RendererOptions {
    * 创建文本节点
    */
   createText(text: String)
+  setText(node, text)
+  createComment(text: String)
 }
 
 export function createRenderer(options: RendererOptions) {
@@ -40,13 +42,20 @@ function baseCreateRenderer(options: RendererOptions): any {
     createElement: hostCreateElement,
     setElementText: hostSetElementText,
     remove: hostRemove,
-    createText: hostCreateText
+    createText: hostCreateText,
+    setText: hostSetText,
+    createComment: hostCreateComment
   } = options
 
   const processText = (oldVNode, newVNode, container, anchor) => {
     if (oldVNode == null) {
-      newVNode.el = hostCreateText()
+      newVNode.el = hostCreateText(newVNode.children)
+      hostInsert(newVNode.el, container, anchor)
     } else {
+      const el = (newVNode.el = oldVNode.el!)
+      if (newVNode.children !== oldVNode.children) {
+        hostSetText(el, newVNode.children)
+      }
     }
   }
 
@@ -57,6 +66,15 @@ function baseCreateRenderer(options: RendererOptions): any {
     } else {
       // 更新操作
       patchElement(oldVNode, newVNode)
+    }
+  }
+
+  const processCommentNode = (oldVNode, newVNode, container, anchor) => {
+    if (oldVNode == null) {
+      newVNode.el = hostCreateComment(newVNode.children)
+      hostInsert(newVNode.el, container, anchor)
+    } else {
+      newVNode.el = oldVNode.el
     }
   }
 
@@ -161,6 +179,7 @@ function baseCreateRenderer(options: RendererOptions): any {
         processText(oldVNode, newVNode, container, anchor)
         break
       case Comment:
+        processCommentNode(oldVNode, newVNode, container, anchor)
         break
       case Fragment:
         break
