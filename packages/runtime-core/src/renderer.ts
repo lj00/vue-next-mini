@@ -1,5 +1,6 @@
 import { EMPTY_OBJ } from '@vue/shared'
 import { ShapeFlags } from 'packages/shared/src/shapeFlags'
+import { normalizeVNode } from './componentRenderUtils'
 import { Comment, Fragment, isSameVNodeType, Text } from './vnode'
 
 export interface RendererOptions {
@@ -46,6 +47,14 @@ function baseCreateRenderer(options: RendererOptions): any {
     setText: hostSetText,
     createComment: hostCreateComment
   } = options
+
+  const processFragment = (oldVNode, newVNode, container, anchor) => {
+    if (oldVNode == null) {
+      mountChildren(newVNode.children, container, anchor)
+    } else {
+      patchChildren(oldVNode, newVNode, container, anchor)
+    }
+  }
 
   const processText = (oldVNode, newVNode, container, anchor) => {
     if (oldVNode == null) {
@@ -95,6 +104,13 @@ function baseCreateRenderer(options: RendererOptions): any {
     }
     // 4. 插入
     hostInsert(el, container, anchor)
+  }
+
+  const mountChildren = (children, container, anchor) => {
+    for (let i = 0; i < children.length; i++) {
+      const child = (children[i] = normalizeVNode(children[i]))
+      patch(null, child, container, anchor)
+    }
   }
 
   const patchElement = (oldVNode, newVNode) => {
@@ -182,6 +198,7 @@ function baseCreateRenderer(options: RendererOptions): any {
         processCommentNode(oldVNode, newVNode, container, anchor)
         break
       case Fragment:
+        processFragment(oldVNode, newVNode, container, anchor)
         break
       default:
         if (shapeFlag & ShapeFlags.ELEMENT) {

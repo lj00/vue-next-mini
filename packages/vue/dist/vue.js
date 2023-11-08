@@ -508,11 +508,31 @@ var Vue = (function (exports) {
         }
     }
 
+    function normalizeVNode(child) {
+        if (typeof child === 'object') {
+            return cloneIfMounted(child);
+        }
+        else {
+            return createVNode(Text, null, String(child));
+        }
+    }
+    function cloneIfMounted(child) {
+        return child;
+    }
+
     function createRenderer(options) {
         return baseCreateRenderer(options);
     }
     function baseCreateRenderer(options) {
         var hostInsert = options.insert, hostPatchProp = options.patchProp, hostCreateElement = options.createElement, hostSetElementText = options.setElementText, hostRemove = options.remove, hostCreateText = options.createText, hostSetText = options.setText, hostCreateComment = options.createComment;
+        var processFragment = function (oldVNode, newVNode, container, anchor) {
+            if (oldVNode == null) {
+                mountChildren(newVNode.children, container, anchor);
+            }
+            else {
+                patchChildren(oldVNode, newVNode, container);
+            }
+        };
         var processText = function (oldVNode, newVNode, container, anchor) {
             if (oldVNode == null) {
                 newVNode.el = hostCreateText(newVNode.children);
@@ -560,6 +580,12 @@ var Vue = (function (exports) {
             }
             // 4. 插入
             hostInsert(el, container, anchor);
+        };
+        var mountChildren = function (children, container, anchor) {
+            for (var i = 0; i < children.length; i++) {
+                var child = (children[i] = normalizeVNode(children[i]));
+                patch(null, child, container, anchor);
+            }
         };
         var patchElement = function (oldVNode, newVNode) {
             var el = (newVNode.el = oldVNode.el);
@@ -625,6 +651,7 @@ var Vue = (function (exports) {
                     processCommentNode(oldVNode, newVNode, container, anchor);
                     break;
                 case Fragment:
+                    processFragment(oldVNode, newVNode, container, anchor);
                     break;
                 default:
                     if (shapeFlag & 1 /* ShapeFlags.ELEMENT */) {
