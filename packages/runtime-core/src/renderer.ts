@@ -1,4 +1,4 @@
-import { EMPTY_OBJ } from '@vue/shared'
+import { EMPTY_OBJ, isString } from '@vue/shared'
 import { ShapeFlags } from 'packages/shared/src/shapeFlags'
 import { normalizeVNode } from './componentRenderUtils'
 import { Comment, Fragment, isSameVNodeType, Text } from './vnode'
@@ -107,6 +107,9 @@ function baseCreateRenderer(options: RendererOptions): any {
   }
 
   const mountChildren = (children, container, anchor) => {
+    if (isString(children)) {
+      children = children.split('')
+    }
     for (let i = 0; i < children.length; i++) {
       const child = (children[i] = normalizeVNode(children[i]))
       patch(null, child, container, anchor)

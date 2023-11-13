@@ -582,6 +582,9 @@ var Vue = (function (exports) {
             hostInsert(el, container, anchor);
         };
         var mountChildren = function (children, container, anchor) {
+            if (isString(children)) {
+                children = children.split('');
+            }
             for (var i = 0; i < children.length; i++) {
                 var child = (children[i] = normalizeVNode(children[i]));
                 patch(null, child, container, anchor);
