@@ -531,6 +531,10 @@ var Vue = (function (exports) {
     function finishComponentSetup(instance) {
         var Component = instance.type;
         instance.render = Component.render;
+        applyOptions(instance);
+    }
+    function applyOptions(instance) {
+        instance.type.data;
     }
 
     function normalizeVNode(child) {

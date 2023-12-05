@@ -27,4 +27,10 @@ function setupStatefulComponent(instance) {
 export function finishComponentSetup(instance) {
   const Component = instance.type
   instance.render = Component.render
+
+  applyOptions(instance)
+}
+
+function applyOptions(instance) {
+  const { data: dataOptions } = instance.type
 }
