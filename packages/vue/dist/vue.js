@@ -534,7 +534,13 @@ var Vue = (function (exports) {
         applyOptions(instance);
     }
     function applyOptions(instance) {
-        instance.type.data;
+        var dataOptions = instance.type.data;
+        if (dataOptions) {
+            var data = dataOptions();
+            if (isObject(data)) {
+                instance.data = reactive(data);
+            }
+        }
     }
 
     function normalizeVNode(child) {
@@ -549,11 +555,11 @@ var Vue = (function (exports) {
         return child;
     }
     function renderComponentRoot(instance) {
-        var vnode = instance.vnode, render = instance.render;
+        var vnode = instance.vnode, render = instance.render, data = instance.data;
         var result;
         try {
             if (vnode.shapeFlag & 4 /* ShapeFlags.STATEFUL_COMPONENT */) {
-                result = normalizeVNode(render());
+                result = normalizeVNode(render.call(data));
             }
         }
         catch (err) {

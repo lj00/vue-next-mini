@@ -1,3 +1,6 @@
+import { isObject } from '@vue/shared'
+import { reactive } from '@vue/vue'
+
 let uid = 0
 
 export function createComponentInstance(vnode) {
@@ -33,4 +36,10 @@ export function finishComponentSetup(instance) {
 
 function applyOptions(instance) {
   const { data: dataOptions } = instance.type
+  if (dataOptions) {
+    const data = dataOptions()
+    if (isObject(data)) {
+      instance.data = reactive(data)
+    }
+  }
 }
