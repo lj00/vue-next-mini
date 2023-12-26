@@ -1,5 +1,5 @@
 import { isObject } from '@vue/shared'
-import { reactive } from '@vue/vue'
+import { reactive } from '@vue/reactivity'
 import { onBeforeMount, onMounted } from './apiLifecycle'
 
 let uid = 0
@@ -56,7 +56,7 @@ function applyOptions(instance) {
   } = instance.type
 
   if (beforeCreate) {
-    callHook(beforeCreate)
+    callHook(beforeCreate, instance.data)
   }
 
   if (dataOptions) {
@@ -67,7 +67,7 @@ function applyOptions(instance) {
   }
 
   if (created) {
-    callHook(created)
+    callHook(created, instance.data)
   }
 
   function registerLifecycleHook(register: Function, hook?: Function) {
@@ -78,6 +78,6 @@ function applyOptions(instance) {
   registerLifecycleHook(onMounted, mounted)
 }
 
-function callHook(hook: Function) {
-  hook()
+function callHook(hook: Function, proxy) {
+  hook.bind(proxy)()
 }

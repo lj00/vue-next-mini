@@ -96,7 +96,7 @@ function baseCreateRenderer(options: RendererOptions): any {
     }
   }
 
-  const mountComponent = (initialVNode, container, anchor) {
+  const mountComponent = (initialVNode, container, anchor) => {
     initialVNode.component = createComponentInstance(initialVNode)
     const instance = initialVNode.component
 
@@ -105,7 +105,7 @@ function baseCreateRenderer(options: RendererOptions): any {
     setupRenderEffect(instance, initialVNode, container, anchor)
   }
 
-  const setupRenderEffect = (instance, initialVNode, container, anchor) {
+  const setupRenderEffect = (instance, initialVNode, container, anchor) => {
     const componentUpdateFn = () => {
       if (!instance.isMounted) {
         const { bm, m } = instance
@@ -122,8 +122,22 @@ function baseCreateRenderer(options: RendererOptions): any {
         }
 
         initialVNode.el = subTree.el
-      } else {
 
+        instance.isMounted = true
+      } else {
+        let { next, vnode } = instance
+        if (!next) {
+          next = vnode
+        }
+
+        const nextTree = renderComponentRoot(instance)
+
+        const prevTree = instance.subTree
+        instance.subTree = nextTree
+
+        patch(prevTree, nextTree, container, anchor)
+
+        next.el = nextTree.el
       }
     }
 
@@ -131,7 +145,6 @@ function baseCreateRenderer(options: RendererOptions): any {
       componentUpdateFn,
       () => queuePreFlushCb(update)
     ))
-
 
     const update = (instance.update = () => effect.run())
 
