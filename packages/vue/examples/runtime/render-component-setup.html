@@ -21,6 +21,10 @@
           name: '张三'
         })
 
+        setTimeout(() => {
+          obj.name = '李四'
+        }, 2000)
+
         return () => h('div', obj.name)
       }
     }

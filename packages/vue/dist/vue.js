@@ -540,11 +540,27 @@ var Vue = (function (exports) {
         setupStatefulComponent(instance);
     }
     function setupStatefulComponent(instance) {
+        var Component = instance.type;
+        var setup = Component.setup;
+        if (setup) {
+            var setupResult = setup();
+            handleSetupResult(instance, setupResult);
+        }
+        else {
+            finishComponentSetup(instance);
+        }
+    }
+    function handleSetupResult(instance, setupResult) {
+        if (isFunction(setupResult)) {
+            instance.render = setupResult;
+        }
         finishComponentSetup(instance);
     }
     function finishComponentSetup(instance) {
         var Component = instance.type;
-        instance.render = Component.render;
+        if (!instance.render) {
+            instance.render = Component.render;
+        }
         applyOptions(instance);
     }
     function applyOptions(instance) {

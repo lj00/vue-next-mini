@@ -1,4 +1,4 @@
-import { isObject } from '@vue/shared'
+import { isFunction, isObject } from '@vue/shared'
 import { reactive } from '@vue/reactivity'
 import { onBeforeMount, onMounted } from './apiLifecycle'
 
@@ -36,12 +36,30 @@ export function setupComponent(instance) {
 }
 
 function setupStatefulComponent(instance) {
+  const Component = instance.type
+
+  const { setup } = Component
+  if (setup) {
+    const setupResult = setup()
+    handleSetupResult(instance, setupResult)
+  } else {
+    finishComponentSetup(instance)
+  }
+}
+
+export function handleSetupResult(instance, setupResult) {
+  if (isFunction(setupResult)) {
+    instance.render = setupResult
+  }
   finishComponentSetup(instance)
 }
 
 export function finishComponentSetup(instance) {
   const Component = instance.type
-  instance.render = Component.render
+
+  if (!instance.render) {
+    instance.render = Component.render
+  }
 
   applyOptions(instance)
 }
