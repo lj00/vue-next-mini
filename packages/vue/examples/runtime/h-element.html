@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="../../../dist/vue.global.js"></script>
+    <script src="../../dist/vue.js"></script>
   </head>
 
   <body>
@@ -17,10 +17,12 @@
     const vnode = h(
       'div',
       {
-        class: 'test'
+        class: 'test',
+        key: 1
       },
       'hello render'
     )
+    console.log(vnode)
 
     render(vnode, document.querySelector('#app'))
   </script>

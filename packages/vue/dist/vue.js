@@ -458,7 +458,8 @@ var Vue = (function (exports) {
             type: type,
             props: props,
             children: children,
-            shapeFlag: shapeFlag
+            shapeFlag: shapeFlag,
+            key: (props === null || props === void 0 ? void 0 : props.key) || null
         };
         normalizeChildren(vnode, children);
         return vnode;
