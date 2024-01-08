@@ -210,6 +210,7 @@ function baseCreateRenderer(options: RendererOptions): any {
       if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
           // TODO: diff
+          patchKeyedChildren(c1, c2, container, anchor)
         } else {
           // TODO: 卸载
         }
@@ -224,6 +225,18 @@ function baseCreateRenderer(options: RendererOptions): any {
         }
       }
     }
+  }
+
+  const patchKeyedChildren = (
+    oldChildren,
+    newChildren,
+    container,
+    parentAnchor
+  ) => {
+    let i = 0
+    const newChildrenLength = newChildren.length
+    let oldChildrenEnd = oldChildren.length - 1
+    let newChildrenEnd = newChildren.length - 1
   }
 
   const patchProps = (el: Element, vnode, oldProps, newProps) => {

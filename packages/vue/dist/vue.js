@@ -744,7 +744,12 @@ var Vue = (function (exports) {
                 }
             }
             else {
-                if (prevShapeFlag & 16 /* ShapeFlags.ARRAY_CHILDREN */) ;
+                if (prevShapeFlag & 16 /* ShapeFlags.ARRAY_CHILDREN */) {
+                    if (shapeFlag & 16 /* ShapeFlags.ARRAY_CHILDREN */) {
+                        // TODO: diff
+                        patchKeyedChildren(c1, c2);
+                    }
+                }
                 else {
                     if (prevShapeFlag & 8 /* ShapeFlags.TEXT_CHILDREN */) {
                         // 删除旧节点的text
@@ -752,6 +757,11 @@ var Vue = (function (exports) {
                     }
                 }
             }
+        };
+        var patchKeyedChildren = function (oldChildren, newChildren, container, parentAnchor) {
+            newChildren.length;
+            oldChildren.length - 1;
+            newChildren.length - 1;
         };
         var patchProps = function (el, vnode, oldProps, newProps) {
             if (oldProps !== newProps) {
