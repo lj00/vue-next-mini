@@ -707,6 +707,9 @@ var Vue = (function (exports) {
                 // 2. 设置文本
                 hostSetElementText(el, vnode.children);
             }
+            else if (shapeFlag & 16 /* ShapeFlags.ARRAY_CHILDREN */) {
+                mountChildren(vnode.children, el, null);
+            }
             // 3. 设置props
             if (props) {
                 for (var key in props) {
@@ -747,7 +750,7 @@ var Vue = (function (exports) {
                 if (prevShapeFlag & 16 /* ShapeFlags.ARRAY_CHILDREN */) {
                     if (shapeFlag & 16 /* ShapeFlags.ARRAY_CHILDREN */) {
                         // TODO: diff
-                        patchKeyedChildren(c1, c2);
+                        patchKeyedChildren(c1, c2, container);
                     }
                 }
                 else {
@@ -759,9 +762,22 @@ var Vue = (function (exports) {
             }
         };
         var patchKeyedChildren = function (oldChildren, newChildren, container, parentAnchor) {
+            var i = 0;
             newChildren.length;
-            oldChildren.length - 1;
-            newChildren.length - 1;
+            var oldChildrenEnd = oldChildren.length - 1;
+            var newChildrenEnd = newChildren.length - 1;
+            // 1. 自前向后
+            while (i <= oldChildrenEnd && i <= newChildrenEnd) {
+                var oldVNode = oldChildren[i];
+                var newVNode = normalizeVNode(newChildren[i]);
+                if (isSameVNodeType(oldVNode, newVNode)) {
+                    patch(oldVNode, newVNode, container, null);
+                }
+                else {
+                    break;
+                }
+                i++;
+            }
         };
         var patchProps = function (el, vnode, oldProps, newProps) {
             if (oldProps !== newProps) {
