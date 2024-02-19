@@ -250,6 +250,39 @@ function baseCreateRenderer(options: RendererOptions): any {
       }
       i++
     }
+
+    // 2. 自后向前
+    while (i <= oldChildrenEnd && i <= newChildrenEnd) {
+      const oldVNode = oldChildren[oldChildrenEnd]
+      const newVNode = newChildren[newChildrenEnd]
+      if (isSameVNodeType(oldVNode, newVNode)) {
+        patch(oldVNode, newVNode, container, null)
+      } else {
+        break
+      }
+      oldChildrenEnd--
+      newChildrenEnd--
+    }
+
+    // 3. 新节点多于旧节点
+    if (i > oldChildrenEnd) {
+      if (i <= newChildrenEnd) {
+        const nextPos = newChildrenEnd + 1
+        const anchor =
+          nextPos < newChildrenLength ? newChildren[nextPos].el : parentAnchor
+        while (i <= newChildrenEnd) {
+          patch(null, normalizeVNode(newChildren[i]), container, anchor)
+          i++
+        }
+      }
+    }
+    // 4. 旧节点多于新节点
+    else if (i > newChildrenEnd) {
+      while (i <= oldChildrenEnd) {
+        unmount(oldChildren[i])
+        i++
+      }
+    }
   }
 
   const patchProps = (el: Element, vnode, oldProps, newProps) => {
@@ -321,4 +354,48 @@ function baseCreateRenderer(options: RendererOptions): any {
   return {
     render
   }
+}
+
+/**
+ * 获取最长递增子序列的下标
+ */
+function getSequence(arr) {
+  const p = arr.slice()
+  const result = [0]
+  let i, j, u, v, c
+  const len = arr.length
+  for (i = 0; i < len; i++) {
+    const arrI = arr[i]
+    if (arrI !== 0) {
+      j = result[result.length - 1]
+      if (arr[j] < arrI) {
+        p[i] = j
+        result.push(i)
+        continue
+      }
+      u = 0
+      v = result.length - 1
+      while (u < v) {
+        c = (u + v) >> 1
+        if (arr[result[c]] < arrI) {
+          u = c + 1
+        } else {
+          v = c
+        }
+      }
+      if (arrI < arr[result[u]]) {
+        if (u > 0) {
+          p[i] = result[u - 1]
+        }
+        result[u] = i
+      }
+    }
+  }
+  u = result.length
+  v = result[u - 1]
+  while (u-- > 0) {
+    result[u] = v
+    v = p[v]
+  }
+  return result
 }

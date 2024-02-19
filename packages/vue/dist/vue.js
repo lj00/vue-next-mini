@@ -628,7 +628,7 @@ var Vue = (function (exports) {
                 mountChildren(newVNode.children, container, anchor);
             }
             else {
-                patchChildren(oldVNode, newVNode, container);
+                patchChildren(oldVNode, newVNode, container, anchor);
             }
         };
         var processText = function (oldVNode, newVNode, container, anchor) {
@@ -732,7 +732,7 @@ var Vue = (function (exports) {
             var el = (newVNode.el = oldVNode.el);
             var oldProps = oldVNode.props || EMPTY_OBJ;
             var newProps = newVNode.props || EMPTY_OBJ;
-            patchChildren(oldVNode, newVNode, el);
+            patchChildren(oldVNode, newVNode, el, null);
             patchProps(el, newVNode, oldProps, newProps);
         };
         var patchChildren = function (oldVNode, newVNode, container, anchor) {
@@ -750,7 +750,7 @@ var Vue = (function (exports) {
                 if (prevShapeFlag & 16 /* ShapeFlags.ARRAY_CHILDREN */) {
                     if (shapeFlag & 16 /* ShapeFlags.ARRAY_CHILDREN */) {
                         // TODO: diff
-                        patchKeyedChildren(c1, c2, container);
+                        patchKeyedChildren(c1, c2, container, anchor);
                     }
                 }
                 else {
@@ -763,7 +763,7 @@ var Vue = (function (exports) {
         };
         var patchKeyedChildren = function (oldChildren, newChildren, container, parentAnchor) {
             var i = 0;
-            newChildren.length;
+            var newChildrenLength = newChildren.length;
             var oldChildrenEnd = oldChildren.length - 1;
             var newChildrenEnd = newChildren.length - 1;
             // 1. 自前向后
@@ -777,6 +777,37 @@ var Vue = (function (exports) {
                     break;
                 }
                 i++;
+            }
+            // 2. 自后向前
+            while (i <= oldChildrenEnd && i <= newChildrenEnd) {
+                var oldVNode = oldChildren[oldChildrenEnd];
+                var newVNode = newChildren[newChildrenEnd];
+                if (isSameVNodeType(oldVNode, newVNode)) {
+                    patch(oldVNode, newVNode, container, null);
+                }
+                else {
+                    break;
+                }
+                oldChildrenEnd--;
+                newChildrenEnd--;
+            }
+            // 3. 新节点多于旧节点
+            if (i > oldChildrenEnd) {
+                if (i <= newChildrenEnd) {
+                    var nextPos = newChildrenEnd + 1;
+                    var anchor = nextPos < newChildrenLength ? newChildren[nextPos].el : parentAnchor;
+                    while (i <= newChildrenEnd) {
+                        patch(null, normalizeVNode(newChildren[i]), container, anchor);
+                        i++;
+                    }
+                }
+            }
+            // 4. 旧节点多于新节点
+            else if (i > newChildrenEnd) {
+                while (i <= oldChildrenEnd) {
+                    unmount(oldChildren[i]);
+                    i++;
+                }
             }
         };
         var patchProps = function (el, vnode, oldProps, newProps) {
