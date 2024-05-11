@@ -1164,25 +1164,18 @@ var Vue = (function (exports) {
         (_a = ensureRenderer()).render.apply(_a, __spreadArray([], __read(args), false));
     };
 
-    function createParserContext(content) {
-        return {
-            source: content
-        };
-    }
     function baseParse(content) {
-        var context = createParserContext(content);
-        console.log(context);
         return {};
     }
 
     function baseCompile(template, options) {
-        var ast = baseParse(template);
+        var ast = baseParse();
         console.log(JSON.stringify(ast));
         return {};
     }
 
     function compile(template, options) {
-        return baseCompile(template);
+        return baseCompile();
     }
 
     exports.Comment = Comment;

@@ -10,6 +10,16 @@ function createParserContext(content: string): ParserContext {
 
 export function baseParse(content: string) {
   const context = createParserContext(content)
-  console.log(context)
+
   return {}
+}
+
+function parseChildren(context: ParserContext, ancestors) {
+  const nodes = []
+
+  return nodes
+}
+
+function startsWith(source: string, searchString: string): boolean {
+  return source.startsWith(searchString)
 }
