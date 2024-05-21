@@ -59,8 +59,10 @@ function parseElement(context: ParserContext, ancestors) {
   element.children = children
 
   if (startsWithEndTagOpen(context.source, element.tag)) {
-    parseTag()
+    parseTag(context, TagType.End)
   }
+
+  return element
 }
 
 function parseText(context: ParserContext) {}
