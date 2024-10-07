@@ -18,7 +18,17 @@ function createParserContext(content: string): ParserContext {
 export function baseParse(content: string) {
   const context = createParserContext(content)
 
-  return {}
+  const children = parseChildren(context, [])
+
+  return createRoot(children)
+}
+
+export function createRoot(children) {
+  return {
+    type: NodeTypes.ROOT,
+    children,
+    loc: {}
+  }
 }
 
 function parseChildren(context: ParserContext, ancestors) {
@@ -65,7 +75,30 @@ function parseElement(context: ParserContext, ancestors) {
   return element
 }
 
-function parseText(context: ParserContext) {}
+function parseText(context: ParserContext) {
+  const endToken = ['<', '{{']
+
+  let endIndex = context.source.length
+  for (let i = 0; i < endToken.length; i++) {
+    const index = context.source.indexOf(endToken[i], 1)
+    if (index !== -1 && endIndex > index) {
+      endIndex = index
+    }
+  }
+
+  const content = parseTextData(context, endIndex)
+  return {
+    type: NodeTypes.TEXT,
+    content
+  }
+}
+
+function parseTextData(context: ParserContext, length: number) {
+  const rawText = context.source.slice(0, length)
+
+  advanceBy(context, length)
+  return rawText
+}
 
 function parseTag(context: ParserContext, type: TagType) {
   const match = /^<\/?([a-z][^\t\r\n\f />]*)/i.exec(context.source)!
