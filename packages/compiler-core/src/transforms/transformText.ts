@@ -1,6 +1,12 @@
 import { NodeTypes } from '../ast'
 import { isText } from '../utils'
 
+/**
+ * 将相邻的文本节点和表达式合并为一个表达式
+ * @param node
+ * @param context
+ * @returns
+ */
 export const transformText = (node, context) => {
   if (
     node.type === NodeTypes.ROOT ||
