@@ -15,12 +15,18 @@
   <script>
     const { compile, h, render } = Vue
 
-    const template = `<div>hello worlddfd</div>`
+    // 复合表达式
+    const template = `<div>hello {{ msg }}</div>`
 
     const renderFn = compile(template)
     console.log(renderFn)
 
     const component = {
+      data() {
+        return {
+          msg: 'world'
+        }
+      },
       render: renderFn
     }
 

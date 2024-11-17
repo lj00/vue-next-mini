@@ -51,6 +51,8 @@ function createBaseVNode(type, props, children, shapeFlag) {
   return vnode
 }
 
+export { createVNode as createElementVNode }
+
 export function normalizeChildren(vnode: VNode, children: unknown) {
   let type = 0
 

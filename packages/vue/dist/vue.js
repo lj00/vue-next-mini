@@ -1570,11 +1570,18 @@ var Vue = (function (exports) {
         return baseCompile(template, options);
     }
 
+    function compileToFunction(template, options) {
+        var code = compile(template, options).code;
+        var render = new Function(code)();
+        return render;
+    }
+
     exports.Comment = Comment;
     exports.Fragment = Fragment;
     exports.Text = Text;
-    exports.compile = compile;
+    exports.compile = compileToFunction;
     exports.computed = computed;
+    exports.createElementVNode = createVNode;
     exports.effect = effect;
     exports.h = h;
     exports.queuePreFlushCb = queuePreFlushCb;
