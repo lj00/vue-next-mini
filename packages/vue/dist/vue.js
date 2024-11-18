@@ -1324,7 +1324,9 @@ var Vue = (function (exports) {
         while (!isEnd(context, ancestors)) {
             var s = context.source;
             var node = void 0;
-            if (startsWith(s, '{{')) ;
+            if (startsWith(s, '{{')) {
+                node = parseInterpolation(context);
+            }
             else if (s[0] === '<') {
                 if (/[a-z]/i.test(s[1])) {
                     node = parseElement(context, ancestors);
@@ -1336,6 +1338,23 @@ var Vue = (function (exports) {
             pushNode(nodes, node);
         }
         return nodes;
+    }
+    function parseInterpolation(context) {
+        // {{ xx }}
+        var _a = __read(['{{', '}}'], 2), open = _a[0], close = _a[1];
+        advanceBy(context, open.length);
+        var closeIndex = context.source.indexOf(close);
+        var preTrimContent = parseTextData(context, closeIndex);
+        var content = preTrimContent.trim();
+        advanceBy(context, close.length);
+        return {
+            type: 5 /* NodeTypes.INTERPOLATION */,
+            content: {
+                type: 4 /* NodeTypes.SIMPLE_EXPRESSION */,
+                isStatic: false,
+                content: content
+            }
+        };
     }
     function pushNode(nodes, node) {
         nodes.push(node);
@@ -1558,6 +1577,7 @@ var Vue = (function (exports) {
     function baseCompile(template, options) {
         if (options === void 0) { options = {}; }
         var ast = baseParse(template);
+        console.log(JSON.stringify(ast));
         transform(ast, extend(options, {
             nodeTransforms: [transformElement, transformText]
         }));

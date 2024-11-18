@@ -38,7 +38,7 @@ function parseChildren(context: ParserContext, ancestors) {
     const s = context.source
     let node
     if (startsWith(s, '{{')) {
-      // TODO: {{
+      node = parseInterpolation(context)
     } else if (s[0] === '<') {
       if (/[a-z]/i.test(s[1])) {
         node = parseElement(context, ancestors)
@@ -53,6 +53,28 @@ function parseChildren(context: ParserContext, ancestors) {
   }
 
   return nodes
+}
+
+function parseInterpolation(context: ParserContext) {
+  // {{ xx }}
+  const [open, close] = ['{{', '}}']
+
+  advanceBy(context, open.length)
+
+  const closeIndex = context.source.indexOf(close)
+  const preTrimContent = parseTextData(context, closeIndex)
+  const content = preTrimContent.trim()
+
+  advanceBy(context, close.length)
+
+  return {
+    type: NodeTypes.INTERPOLATION,
+    content: {
+      type: NodeTypes.SIMPLE_EXPRESSION,
+      isStatic: false,
+      content
+    }
+  }
 }
 
 function pushNode(nodes, node) {
