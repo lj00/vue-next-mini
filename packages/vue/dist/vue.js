@@ -1167,9 +1167,11 @@ var Vue = (function (exports) {
     var _a;
     var CREATE_ELEMENT_VNODE = Symbol('createElementVNode');
     var CREATE_VNODE = Symbol('createVNode');
+    var TO_DISPLAY_STRING = Symbol('toDisplayString');
     var helperNameMap = (_a = {},
         _a[CREATE_ELEMENT_VNODE] = 'createElementVNode',
         _a[CREATE_VNODE] = 'createVNode',
+        _a[TO_DISPLAY_STRING] = 'toDisplayString',
         _a);
 
     function isText(node) {
@@ -1477,6 +1479,9 @@ var Vue = (function (exports) {
             case 0 /* NodeTypes.ROOT */:
                 traverseChildren(node, context);
                 break;
+            case 5 /* NodeTypes.INTERPOLATION */:
+                context.helper(TO_DISPLAY_STRING);
+                break;
         }
         context.currentNode = node;
         var i = exitFns.length;
@@ -1581,8 +1586,8 @@ var Vue = (function (exports) {
         transform(ast, extend(options, {
             nodeTransforms: [transformElement, transformText]
         }));
+        // console.log(JSON.stringify(ast))
         console.log(ast);
-        console.log(JSON.stringify(ast));
         return generate(ast);
     }
 
