@@ -19,6 +19,9 @@ export function generate(ast) {
 
   indent()
 
+  push(`with (_ctx) {`)
+  indent()
+
   const hasHelpers = ast.helpers.length > 0
   if (hasHelpers) {
     push(`const { ${ast.helpers.map(aliasHelper).join(', ')} } = _Vue`)
@@ -34,6 +37,9 @@ export function generate(ast) {
   } else {
     push(`null`)
   }
+
+  deindent()
+  push('}')
 
   deindent()
   push('}')
@@ -93,6 +99,12 @@ function genNode(node, context) {
       break
     case NodeTypes.TEXT:
       genText(node, context)
+      break
+    case NodeTypes.SIMPLE_EXPRESSION:
+      break
+    case NodeTypes.INTERPOLATION:
+      break
+    case NodeTypes.COMPOUND_EXPRESSION:
       break
   }
 }

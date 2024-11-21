@@ -1191,6 +1191,8 @@ var Vue = (function (exports) {
         var signature = args.join(', ');
         push("function ".concat(functionName, "(").concat(signature, ") {"));
         indent();
+        push("with (_ctx) {");
+        indent();
         var hasHelpers = ast.helpers.length > 0;
         if (hasHelpers) {
             push("const { ".concat(ast.helpers.map(aliasHelper).join(', '), " } = _Vue"));
@@ -1205,6 +1207,8 @@ var Vue = (function (exports) {
         else {
             push("null");
         }
+        deindent();
+        push('}');
         deindent();
         push('}');
         return {
