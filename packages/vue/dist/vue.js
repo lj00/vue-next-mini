@@ -1262,7 +1262,23 @@ var Vue = (function (exports) {
             case 2 /* NodeTypes.TEXT */:
                 genText(node, context);
                 break;
+            case 4 /* NodeTypes.SIMPLE_EXPRESSION */:
+                genExpression(node, context);
+                break;
+            case 5 /* NodeTypes.INTERPOLATION */:
+                genInterpolation(node, context);
+                break;
         }
+    }
+    function genExpression(node, context) {
+        var content = node.content, isStatic = node.isStatic;
+        context.push(isStatic ? JSON.stringify(content) : content);
+    }
+    function genInterpolation(node, context) {
+        var push = context.push, helper = context.helper;
+        push("".concat(helper(TO_DISPLAY_STRING), "("));
+        genNode(node.content, context);
+        push(")");
     }
     function genText(node, context) {
         context.push(JSON.stringify(node.content));

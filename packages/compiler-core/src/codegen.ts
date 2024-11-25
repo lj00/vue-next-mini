@@ -1,6 +1,6 @@
 import { isArray, isString } from '@vue/shared'
 import { NodeTypes } from './ast'
-import { helperNameMap } from './runtimeHelpers'
+import { helperNameMap, TO_DISPLAY_STRING } from './runtimeHelpers'
 import { getVNodeHelper } from './utils'
 
 const aliasHelper = (s: symbol) => `${helperNameMap[s]}: _${helperNameMap[s]}`
@@ -101,12 +101,26 @@ function genNode(node, context) {
       genText(node, context)
       break
     case NodeTypes.SIMPLE_EXPRESSION:
+      genExpression(node, context)
       break
     case NodeTypes.INTERPOLATION:
+      genInterpolation(node, context)
       break
     case NodeTypes.COMPOUND_EXPRESSION:
       break
   }
+}
+
+function genExpression(node, context) {
+  const { content, isStatic } = node
+  context.push(isStatic ? JSON.stringify(content) : content)
+}
+
+function genInterpolation(node, context) {
+  const { push, helper } = context
+  push(`${helper(TO_DISPLAY_STRING)}(`)
+  genNode(node.content, context)
+  push(`)`)
 }
 
 function genText(node, context) {
