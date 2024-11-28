@@ -1268,6 +1268,20 @@ var Vue = (function (exports) {
             case 5 /* NodeTypes.INTERPOLATION */:
                 genInterpolation(node, context);
                 break;
+            case 8 /* NodeTypes.COMPOUND_EXPRESSION */:
+                genCompoundExpression(node, context);
+                break;
+        }
+    }
+    function genCompoundExpression(node, context) {
+        for (var i = 0; i < node.children.length; i++) {
+            var child = node.children[i];
+            if (isString(child)) {
+                context.push(child);
+            }
+            else {
+                genNode(child, context);
+            }
         }
     }
     function genExpression(node, context) {

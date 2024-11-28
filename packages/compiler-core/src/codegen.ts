@@ -107,7 +107,19 @@ function genNode(node, context) {
       genInterpolation(node, context)
       break
     case NodeTypes.COMPOUND_EXPRESSION:
+      genCompoundExpression(node, context)
       break
+  }
+}
+
+function genCompoundExpression(node, context) {
+  for (let i = 0; i < node.children.length; i++) {
+    const child = node.children[i]
+    if (isString(child)) {
+      context.push(child)
+    } else {
+      genNode(child, context)
+    }
   }
 }
 
