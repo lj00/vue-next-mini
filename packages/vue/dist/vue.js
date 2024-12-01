@@ -600,11 +600,11 @@ var Vue = (function (exports) {
         return child;
     }
     function renderComponentRoot(instance) {
-        var vnode = instance.vnode, render = instance.render, data = instance.data;
+        var vnode = instance.vnode, render = instance.render, _a = instance.data, data = _a === void 0 ? {} : _a;
         var result;
         try {
             if (vnode.shapeFlag & 4 /* ShapeFlags.STATEFUL_COMPONENT */) {
-                result = normalizeVNode(render.call(data));
+                result = normalizeVNode(render.call(data, data));
             }
         }
         catch (err) {
