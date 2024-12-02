@@ -1,3 +1,5 @@
+export { toDisplayString } from './toDiaplayString'
+
 export const isArray = Array.isArray
 
 export const isObject = (val: unknown) =>

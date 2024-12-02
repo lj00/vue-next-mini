@@ -55,6 +55,10 @@ var Vue = (function (exports) {
         return to.concat(ar || Array.prototype.slice.call(from));
     }
 
+    var toDisplayString = function (val) {
+        return String(val);
+    };
+
     var isArray = Array.isArray;
     var isObject = function (val) {
         return val !== null && typeof val === 'object';
@@ -1271,6 +1275,9 @@ var Vue = (function (exports) {
             case 8 /* NodeTypes.COMPOUND_EXPRESSION */:
                 genCompoundExpression(node, context);
                 break;
+            case 1 /* NodeTypes.ELEMENT */:
+                genNode(node.codegenNode, context);
+                break;
         }
     }
     function genCompoundExpression(node, context) {
@@ -1616,7 +1623,7 @@ var Vue = (function (exports) {
     function baseCompile(template, options) {
         if (options === void 0) { options = {}; }
         var ast = baseParse(template);
-        console.log(JSON.stringify(ast));
+        // console.log(JSON.stringify(ast))
         transform(ast, extend(options, {
             nodeTransforms: [transformElement, transformText]
         }));
@@ -1647,6 +1654,7 @@ var Vue = (function (exports) {
     exports.reactive = reactive;
     exports.ref = ref;
     exports.render = render;
+    exports.toDisplayString = toDisplayString;
     exports.watch = watch;
 
     Object.defineProperty(exports, '__esModule', { value: true });

@@ -8,7 +8,7 @@ import { transformText } from './transforms/transformText'
 export function baseCompile(template: string, options = {}) {
   const ast = baseParse(template)
 
-  console.log(JSON.stringify(ast))
+  // console.log(JSON.stringify(ast))
 
   transform(
     ast,
