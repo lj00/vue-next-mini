@@ -1403,13 +1403,13 @@ var Vue = (function (exports) {
         nodes.push(node);
     }
     function parseElement(context, ancestors) {
-        var element = parseTag(context);
+        var element = parseTag(context, 0 /* TagType.Start */);
         ancestors.push(element);
         var children = parseChildren(context, ancestors);
         ancestors.pop();
         element.children = children;
         if (startsWithEndTagOpen(context.source, element.tag)) {
-            parseTag(context);
+            parseTag(context, 1 /* TagType.End */);
         }
         return element;
     }
@@ -1437,6 +1437,9 @@ var Vue = (function (exports) {
         var match = /^<\/?([a-z][^\t\r\n\f />]*)/i.exec(context.source);
         var tag = match[1];
         advanceBy(context, match[0].length);
+        // 属性和指令的处理
+        advanceSpaces(context);
+        parseAttributes(context, type);
         var isSelfClosing = startsWith(context.source, '/>');
         advanceBy(context, isSelfClosing ? 2 : 1);
         return {
@@ -1446,6 +1449,30 @@ var Vue = (function (exports) {
             children: [],
             props: []
         };
+    }
+    function parseAttributes(context, type) {
+        var props = [];
+        while (context.source.length > 0 &&
+            !startsWith(context.source, '>') &&
+            !startsWith(context.source, '/>')) {
+            var attr = parseAttribute(context);
+            if (type === 0 /* TagType.Start */) {
+                props.push(attr);
+            }
+            advanceSpaces(context);
+        }
+        return props;
+    }
+    function parseAttribute(context, nameSet) {
+        var match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source);
+        var name = match[0];
+        console.log(name);
+    }
+    function advanceSpaces(context) {
+        var match = /^[\t\r\n\f ]+/.exec(context.source);
+        if (match) {
+            advanceBy(context, match[0].length);
+        }
     }
     function isEnd(context, ancestors) {
         var s = context.source;

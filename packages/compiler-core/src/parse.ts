@@ -128,6 +128,10 @@ function parseTag(context: ParserContext, type: TagType) {
 
   advanceBy(context, match[0].length)
 
+  // 属性和指令的处理
+  advanceSpaces(context)
+  let props = parseAttributes(context, type)
+
   let isSelfClosing = startsWith(context.source, '/>')
   advanceBy(context, isSelfClosing ? 2 : 1)
 
@@ -137,6 +141,39 @@ function parseTag(context: ParserContext, type: TagType) {
     tagType: ElementTypes.ELEMENT,
     children: [],
     props: []
+  }
+}
+
+function parseAttributes(context, type) {
+  const props = []
+  const attributeNames = new Set<string>()
+
+  while (
+    context.source.length > 0 &&
+    !startsWith(context.source, '>') &&
+    !startsWith(context.source, '/>')
+  ) {
+    const attr = parseAttribute(context, attributeNames)
+    if (type === TagType.Start) {
+      props.push(attr)
+    }
+    advanceSpaces(context)
+  }
+
+  return props
+}
+
+function parseAttribute(context: ParserContext, nameSet: Set<string>) {
+  const match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source)!
+  const name = match[0]
+  console.log(name)
+}
+
+function advanceSpaces(context: ParserContext): void {
+  const match = /^[\t\r\n\f ]+/.exec(context.source)
+
+  if (match) {
+    advanceBy(context, match[0].length)
   }
 }
 
