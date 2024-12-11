@@ -167,6 +167,18 @@ function parseAttribute(context: ParserContext, nameSet: Set<string>) {
   const match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source)!
   const name = match[0]
   console.log(name)
+
+  nameSet.add(name)
+
+  advanceBy(context, name.length)
+
+  let value = undefined
+  if (/^[\t\r\n\f ]*=/.test(context.source)) {
+    advanceSpaces(context)
+    advanceBy(context, 1)
+    advanceSpaces(context)
+    value = parseAttributeValue(context)
+  }
 }
 
 function advanceSpaces(context: ParserContext): void {

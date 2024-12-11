@@ -1452,10 +1452,11 @@ var Vue = (function (exports) {
     }
     function parseAttributes(context, type) {
         var props = [];
+        var attributeNames = new Set();
         while (context.source.length > 0 &&
             !startsWith(context.source, '>') &&
             !startsWith(context.source, '/>')) {
-            var attr = parseAttribute(context);
+            var attr = parseAttribute(context, attributeNames);
             if (type === 0 /* TagType.Start */) {
                 props.push(attr);
             }
@@ -1467,6 +1468,14 @@ var Vue = (function (exports) {
         var match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source);
         var name = match[0];
         console.log(name);
+        nameSet.add(name);
+        advanceBy(context, name.length);
+        if (/^[\t\r\n\f ]*=/.test(context.source)) {
+            advanceSpaces(context);
+            advanceBy(context, 1);
+            advanceSpaces(context);
+            parseAttributeValue(context);
+        }
     }
     function advanceSpaces(context) {
         var match = /^[\t\r\n\f ]+/.exec(context.source);
