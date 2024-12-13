@@ -1477,6 +1477,20 @@ var Vue = (function (exports) {
             parseAttributeValue(context);
         }
     }
+    function parseAttributeValue(context) {
+        var content = '';
+        var quote = context.source[0];
+        advanceBy(context, 1);
+        var endIndex = context.source.indexOf(quote);
+        if (endIndex === -1) {
+            content = parseTextData(context, context.source.length);
+        }
+        else {
+            content = parseTextData(context, endIndex);
+            advanceBy(context, 1);
+        }
+        return { content: content };
+    }
     function advanceSpaces(context) {
         var match = /^[\t\r\n\f ]+/.exec(context.source);
         if (match) {

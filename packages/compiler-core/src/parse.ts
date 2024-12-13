@@ -181,6 +181,22 @@ function parseAttribute(context: ParserContext, nameSet: Set<string>) {
   }
 }
 
+function parseAttributeValue(context: ParserContext) {
+  let content = ''
+
+  const quote = context.source[0]
+  advanceBy(context, 1)
+  const endIndex = context.source.indexOf(quote)
+  if (endIndex === -1) {
+    content = parseTextData(context, context.source.length)
+  } else {
+    content = parseTextData(context, endIndex)
+    advanceBy(context, 1)
+  }
+
+  return { content }
+}
+
 function advanceSpaces(context: ParserContext): void {
   const match = /^[\t\r\n\f ]+/.exec(context.source)
 
