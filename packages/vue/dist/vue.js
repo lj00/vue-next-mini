@@ -1439,7 +1439,7 @@ var Vue = (function (exports) {
         advanceBy(context, match[0].length);
         // 属性和指令的处理
         advanceSpaces(context);
-        parseAttributes(context, type);
+        var props = parseAttributes(context, type);
         var isSelfClosing = startsWith(context.source, '/>');
         advanceBy(context, isSelfClosing ? 2 : 1);
         return {
@@ -1447,7 +1447,7 @@ var Vue = (function (exports) {
             tag: tag,
             tagType: 0 /* ElementTypes.ELEMENT */,
             children: [],
-            props: []
+            props: props
         };
     }
     function parseAttributes(context, type) {
@@ -1470,12 +1470,40 @@ var Vue = (function (exports) {
         console.log(name);
         nameSet.add(name);
         advanceBy(context, name.length);
+        var value = undefined;
         if (/^[\t\r\n\f ]*=/.test(context.source)) {
             advanceSpaces(context);
             advanceBy(context, 1);
             advanceSpaces(context);
-            parseAttributeValue(context);
+            value = parseAttributeValue(context);
         }
+        // v-
+        if (/^(v-[A-Za-z0-9-]|:|\.|@|#)/.test(name)) {
+            var match_1 = /(?:^v-([a-z0-9-]+))?(?:(?::|^\.|^@|^#)(\[[^\]]+\]|[^\.]+))?(.+)?$/i.exec(name);
+            var dirName = match_1[1];
+            return {
+                type: 7 /* NodeTypes.DIRECTIVE */,
+                name: dirName,
+                exp: value && {
+                    type: 4 /* NodeTypes.SIMPLE_EXPRESSION */,
+                    isStatic: false,
+                    loc: {}
+                },
+                arg: undefined,
+                modifiers: undefined,
+                loc: {}
+            };
+        }
+        return {
+            type: 6 /* NodeTypes.ATTRIBUTE */,
+            name: name,
+            value: value && {
+                type: 2 /* NodeTypes.TEXT */,
+                content: value.content,
+                loc: {}
+            },
+            loc: {}
+        };
     }
     function parseAttributeValue(context) {
         var content = '';
@@ -1489,7 +1517,11 @@ var Vue = (function (exports) {
             content = parseTextData(context, endIndex);
             advanceBy(context, 1);
         }
-        return { content: content };
+        return {
+            content: content,
+            isQuoted: true,
+            loc: {}
+        };
     }
     function advanceSpaces(context) {
         var match = /^[\t\r\n\f ]+/.exec(context.source);
@@ -1673,12 +1705,11 @@ var Vue = (function (exports) {
     function baseCompile(template, options) {
         if (options === void 0) { options = {}; }
         var ast = baseParse(template);
-        // console.log(JSON.stringify(ast))
+        console.log(JSON.stringify(ast));
         transform(ast, extend(options, {
             nodeTransforms: [transformElement, transformText]
         }));
         // console.log(JSON.stringify(ast))
-        console.log(ast);
         return generate(ast);
     }
 

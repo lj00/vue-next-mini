@@ -140,7 +140,7 @@ function parseTag(context: ParserContext, type: TagType) {
     tag,
     tagType: ElementTypes.ELEMENT,
     children: [],
-    props: []
+    props: props
   }
 }
 
@@ -172,12 +172,46 @@ function parseAttribute(context: ParserContext, nameSet: Set<string>) {
 
   advanceBy(context, name.length)
 
-  let value = undefined
+  let value: any = undefined
   if (/^[\t\r\n\f ]*=/.test(context.source)) {
     advanceSpaces(context)
     advanceBy(context, 1)
     advanceSpaces(context)
     value = parseAttributeValue(context)
+  }
+
+  // v-
+  if (/^(v-[A-Za-z0-9-]|:|\.|@|#)/.test(name)) {
+    const match =
+      /(?:^v-([a-z0-9-]+))?(?:(?::|^\.|^@|^#)(\[[^\]]+\]|[^\.]+))?(.+)?$/i.exec(
+        name
+      )!
+
+    let dirName = match[1]
+
+    return {
+      type: NodeTypes.DIRECTIVE,
+      name: dirName,
+      exp: value && {
+        type: NodeTypes.SIMPLE_EXPRESSION,
+        isStatic: false,
+        loc: {}
+      },
+      arg: undefined,
+      modifiers: undefined,
+      loc: {}
+    }
+  }
+
+  return {
+    type: NodeTypes.ATTRIBUTE,
+    name,
+    value: value && {
+      type: NodeTypes.TEXT,
+      content: value.content,
+      loc: {}
+    },
+    loc: {}
   }
 }
 
@@ -194,7 +228,11 @@ function parseAttributeValue(context: ParserContext) {
     advanceBy(context, 1)
   }
 
-  return { content }
+  return {
+    content,
+    isQuoted: true,
+    loc: {}
+  }
 }
 
 function advanceSpaces(context: ParserContext): void {
